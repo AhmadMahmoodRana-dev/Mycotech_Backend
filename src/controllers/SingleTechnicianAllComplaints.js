@@ -12,12 +12,23 @@ const SingleTechnicianAllComplaints = async (req, res) => {
     const connection = await getConnection();
 
     const result = await connection.execute(
-      `SELECT * FROM crm_complaints 
-       WHERE TECH_EMP_ID = :emp_id 
-         AND UPPER(STATUS) NOT IN ('CLOSED', 'CANCELED','TRANSFERED')`,
+      `SELECT 
+         c.*,
+         GET_DATA_VALUE_DESC(c.MODEL_NAME,233) As PRODUCT_MODEL_NUMBER ,
+         Get_Inv_Item_Level_3desc (GET_DATA_VALUE_DESC (c.MODEL_NAME, 233)) As PRODUCT_NAME,
+         dv.VALUE_SET_DESCRIPTION AS REGION_DESCRIPTION
+       FROM 
+         crm_complaints c
+       LEFT JOIN 
+         data_values dv 
+         ON c.REGION = dv.VALUE_SET_VALUE AND dv.VALUE_SET_ID = 84
+       WHERE 
+         c.TECH_EMP_ID = :emp_id 
+         AND UPPER(c.STATUS) NOT IN ('CLOSED', 'CANCELED', 'TRANSFERED','PNA_CLOSED')`,
       { emp_id },
       { outFormat: oracledb.OUT_FORMAT_OBJECT }
     );
+    
 
     await connection.close();
 
