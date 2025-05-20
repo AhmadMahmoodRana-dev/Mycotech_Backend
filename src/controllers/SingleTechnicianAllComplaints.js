@@ -24,7 +24,7 @@ const SingleTechnicianAllComplaints = async (req, res) => {
          ON c.REGION = dv.VALUE_SET_VALUE AND dv.VALUE_SET_ID = 84
        WHERE 
          c.TECH_EMP_ID = :emp_id 
-         AND UPPER(c.STATUS) NOT IN ('CLOSED', 'CANCELED', 'TRANSFERED')`,
+         AND UPPER(c.STATUS) NOT IN ('CLOSED', 'CANCELED', 'TRANSFERED','PNA_CLOSED')`,
       { emp_id },
       { outFormat: oracledb.OUT_FORMAT_OBJECT }
     );
